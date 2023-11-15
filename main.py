@@ -35,38 +35,38 @@ def getAlphabet():
         alphabet[chr(i)] = ((colors[qColors - colorCounter //qColors - 1]), (colors[colorCounter %qColors]))
         colorCounter += 1
 
-    alphabet[" "] = ((colors[colorCounter // qColors]), (colors[colorCounter % qColors]))
-    # alphabet["A"] = ((255, 180, 161), (255, 180, 161))
-    # alphabet["B"] = ((0, 255, 149), (123, 255, 143))
-    # alphabet["O"] = ((255, 88, 0), (255, 55, 55))
-    # alphabet[" "] = ((255, 255, 255), (255, 255, 255))
+    alphabet[" "] = ((255, 255, 255), (255, 255, 255))
 
     return alphabet
 
 def drawCode(map, msg: str, alphabet):
 
     angle = 0
-    angleMessage = DELTA * len(msg)
-    # print(angleMessage)
+    angleMessage = 2 * DELTA * len(msg)
+    
     while angle < 360:
 
-        # print(f"x = {angle % angleMessage}")
-        map = cv.ellipse(map, CENTER, (RADIUS, RADIUS), 0, angle, angle + DELTA, alphabet[msg[angle % angleMessage // DELTA]][0], -1)
-        angle += 8
-        map = cv.ellipse(map, CENTER, (RADIUS, RADIUS), 0, angle, angle + DELTA, alphabet[msg[angle % angleMessage // DELTA]][1], -1)
-        angle += 8
+        map = cv.ellipse(map, CENTER, (RADIUS, RADIUS), 0, angle, angle + DELTA, alphabet[msg[angle % angleMessage // (2*DELTA)]][0], -1)
+        angle += DELTA
+
+        map = cv.ellipse(map, CENTER, (RADIUS, RADIUS), 0, angle, angle + DELTA, alphabet[msg[(angle -8) % angleMessage // (2*DELTA)]][1], -1)
+        angle += DELTA
 
     return map
 
-msg = "SCANDALIST"#input("Message: ")
+msg = "SCANDALIST "#input("Message: ")
 
 alphabet = getAlphabet()
 
 map = np.zeros(shape=SIZE_MAP, dtype='uint8')
 
+map = cv.rectangle(map, (0, 0), (SIZE_MAP[0], SIZE_MAP[1]), (220, 200, 200), -1)
+
 map = cv.circle(map, CENTER, RADIUS, (255, 255, 255), -1)
 
 map = drawCode(map, msg, alphabet)
+
+cv.imwrite("demo/code.png", map)
 
 cv.namedWindow("Map")
 
